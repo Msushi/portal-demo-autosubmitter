@@ -1,10 +1,12 @@
 def parse(filePath):
-    f = open(filePath, 'rb')
-    data = f.read()
-    f.close()
+    with open(filePath, 'rb') as f:
+        data = f.read()
 
     name = data[276:536]
     map = data[536:796]
+
+    name = name.decode('utf-8').rstrip('\x00')
+    map = map.decode('utf-8').rstrip('\x00')
 
     maxTick = -1
     tick = 0
@@ -15,7 +17,6 @@ def parse(filePath):
     
     while (messageType != 7):
         tick = int.from_bytes(data[readBuffer:readBuffer+4], byteorder='little')
-        print(tick)
         readBuffer += 4
 
         if (tick < 4294964510 and tick > maxTick):
@@ -30,7 +31,9 @@ def parse(filePath):
             readBuffer += 4
             readBuffer += (int.from_bytes(data[readBuffer:readBuffer+4], byteorder="little") + 4)
         else:
-            print("Error in messagetype")
+            if (messageType != 3):
+                print("Error in messagetype")
+                print(messageType)
 
         messageType = int.from_bytes(data[readBuffer:readBuffer+1], byteorder='little')
         readBuffer += 1
