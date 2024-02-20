@@ -39,6 +39,8 @@ def getAPIKeys():
     if gapiEdited or srdcEdited:
         writeToFile(gapiRefreshKey, srdcKey)
 
+    return gapiKey, srdcKey
+
 def getGapiKey():
     print("You do not have a valid google account linked.")
     print("Please click on the link below and login to grant access to your google drive")

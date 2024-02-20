@@ -1,4 +1,4 @@
-def parse(filePath):
+def parse_demo(filePath):
     with open(filePath, 'rb') as f:
         data = f.read()
 
@@ -41,3 +41,5 @@ def parse(filePath):
     print(name)
     print(map)
     print(maxTick)
+
+    return map, maxTick
