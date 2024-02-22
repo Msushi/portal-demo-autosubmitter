@@ -27,6 +27,9 @@ def parse_demo(filePath):
 
         if (tick < 4294960000 and tick > maxTick):
             maxTick = tick
+
+        if (tick == 0):
+            maxTick = 0
         
         if (messageType == 1 or messageType == 2):
             #Testing for Portal 1 Wakeup

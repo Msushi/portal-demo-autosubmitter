@@ -1,9 +1,8 @@
 import requests
 import os
-from dotenv import load_dotenv
+from google_secret import *
 
 def getAPIKeys(pathToExe):
-    load_dotenv()
 
     gapiRefreshKey = ""
     gapiKey = ""
@@ -38,14 +37,14 @@ def getAPIKeys(pathToExe):
     print()
         
     if gapiEdited or srdcEdited:
-        writeToFile(gapiRefreshKey, srdcKey)
+        writeToFile(gapiRefreshKey, srdcKey, dir)
 
     return gapiKey, srdcKey
 
 def getGapiKey():
     print("You do not have a valid google account linked.")
     print("Please click on the link below and login to grant access to your google drive")
-    print(os.getenv('oauth_url'))
+    print(oauth_url)
     gapiKey = input("Authorization Code:")
     print()
     return getGapiKeyFromToken(gapiKey, False)
@@ -53,28 +52,26 @@ def getGapiKey():
 def getGapiKeyFromToken(authCode, refreshToken):
     url = "https://accounts.google.com/o/oauth2/token"
 
-    print(os.getenv('client_id'))
 
     if (refreshToken):
         data = {
             "refresh_token": authCode,
-            "client_id": os.getenv('client_id'),
-            "client_secret": os.getenv('client_secret'),
+            "client_id": client_id,
+            "client_secret": client_secret,
             "grant_type": "refresh_token",
             "redirect_uri": "urn:ietf:wg:oauth:2.0:oob"
         }
     else:
         data = {
             "code": authCode,
-            "client_id": os.getenv('client_id'),
-            "client_secret": os.getenv('client_secret'),
+            "client_id": client_id,
+            "client_secret": client_secret,
             "grant_type": "authorization_code",
             "redirect_uri": "urn:ietf:wg:oauth:2.0:oob"
         }
 
     response = requests.post(url, data=data)
 
-    print(response.content)
 
     if response.status_code == 200:
         refresh_token = response.json().get("refresh_token")
@@ -117,15 +114,16 @@ def checkValidSRDCKey(srdcKey):
     url = "https://speedrun.com/api/v1/profile"
     headers = {
         "Host": "www.speedrun.com",
-        "X-API-Key": srdcKey
+        "X-API-Key": srdcKey,
+        "User-Agent": "MsushiPortalAutosubmitter/b0.1"
     }
 
     response = requests.get(url, headers=headers)
 
     return (response.status_code == 200)
 
-def writeToFile(gapiRefreshKey, srdcKey):
-    with open("settings.cfg", 'w') as f:
+def writeToFile(gapiRefreshKey, srdcKey, dir):
+    with open(f"{dir}\\settings.cfg", 'w') as f:
         f.write(gapiRefreshKey)
         f.write("\n")
         f.write(srdcKey)

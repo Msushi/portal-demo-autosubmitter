@@ -12,7 +12,7 @@ def getSubmissionInfo(maps, ticks, wakeup):
 		totalTicks += tick
 	if game == "Portal":
 		#Add vault save time if we never detected a wakeup start.
-		if not wakeup:
+		if not wakeup and not isIL:
 			totalTicks += 3535
 		totalTicks += len(ticks)
 		time = totalTicks * 0.015

@@ -69,11 +69,9 @@ def getFolderID(gapiKey):
     if response.status_code == 200:
         data = response.json()
         folders = data.get("files")
-        print(folders)
         if folders:
             return folders[0].get("id")
         else:
-            print("No folder found with the specified name.")
             return createFolder("Portal Demos", gapiKey)
     else:
         print("Error:", response.status_code)

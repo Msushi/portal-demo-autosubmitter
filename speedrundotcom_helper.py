@@ -5,16 +5,20 @@ def submitRun(srdcKey, submission):
     url = "https://speedrun.com/api/v1/runs"
     headers = {
         "Host": "www.speedrun.com",
-        "X-API-Key": srdcKey
+        "X-API-Key": srdcKey,
+        "User-Agent": "MsushiPortalAutosubmitter/b0.1"
     }
 
     response = requests.post(url, headers=headers, json=submission)
 
-    print(response.content)
 
-    data = response.json()
-    print("Speedrun successfully submitted to")
-    print(data.get("data").get("weblink"))
+    if (response.status_code == 201):
+        data = response.json()
+        return (data.get("data").get("weblink"))
+    else:
+        print("Error submitting speedrun")
+        print(response.content)
+        return ""
 
 
 def submitPortalIL(srdcKey, category, level, time, ticks, demoLink):
@@ -29,16 +33,10 @@ def submitPortalIL(srdcKey, category, level, time, ticks, demoLink):
             },
             "emulated": False,
             "comment": demoLink,
-            "variables": {
-                "gnx0q06n": {
-                    "type": "user-defined",
-                    "value": str(ticks),
-                },
-            }, 
         }
     }
 
-    submitRun(srdcKey, submission)
+    return submitRun(srdcKey, submission)
 
 def submitPortalRun(srdcKey, category, time, variableID, demoLink):
     submission = {
@@ -59,6 +57,6 @@ def submitPortalRun(srdcKey, category, time, variableID, demoLink):
         }
     }
 
-    submitRun(srdcKey, submission)
+    return submitRun(srdcKey, submission)
     
 
