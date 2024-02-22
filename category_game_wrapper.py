@@ -1,11 +1,12 @@
 def getSubmissionInfo(maps, ticks, wakeup):
 	game = getGameFromMap(maps[0])
 	isIL = ILDetection(game, maps)
+	variableID = "Not Set"
 	levelText = "Not Set"
 	levelID = "Not Set"
 	if isIL:
 		levelText, levelID = getIL(game, maps[0])
-	categoryText, categoryID = getCategoryFromUser(game, isIL)
+	categoryText, categoryID, variableID = getCategoryFromUser(game, isIL)
 	totalTicks = 0
 	for tick in ticks:
 		totalTicks += tick
@@ -16,7 +17,7 @@ def getSubmissionInfo(maps, ticks, wakeup):
 		totalTicks += len(ticks)
 		time = totalTicks * 0.015
 	
-	return game, isIL, levelID, categoryID, time, totalTicks, levelText, categoryText
+	return game, isIL, levelID, categoryID, time, totalTicks, variableID, levelText, categoryText
 
 def ILDetection(game, maps):
 	uniqueMaps = set(maps)
@@ -25,30 +26,53 @@ def ILDetection(game, maps):
 	if game == "Portal 2":
 		pass
 
-def getCategoryFromUser(game, IL):
+def getCategoryFromUser(game, isIL):
 	category = 'z'
 	loops = 0
 	print("What category is this speedrun?")
 	print()
 	print()
 	if (game == "Portal"):
-		print("o - Out of Bounds")
-		print("i - Inbounds")
-		print("g - Glitchless")
-		while not(category == 'o' or category == 'i' or category == 'g'):
-			if loops > 0:
-				print("That is not a valid category. Please try again.")
-			print()
-			category = input()
-			category = category.lower()
-			loops += 1
-		if (category == 'o'):
-			return "Out of Bounds", "xw20jzkn"
-		elif (category == "i"):
-			return "Inbounds", "xwdmg4dq"
+		if (isIL):
+			print("o - Out of Bounds")
+			print("i - Inbounds")
+			print("g - Glitchless")
+			while not(category == 'o' or category == 'i' or category == 'g'):
+				if loops > 0:
+					print("That is not a valid category. Please try again.")
+				print()
+				category = input()
+				category = category.lower()
+				loops += 1
+			if (category == 'o'):
+				return "Out of Bounds", "xw20jzkn", "Not Set"
+			elif (category == "i"):
+				return "Inbounds", "xwdmg4dq", "Not Set"
+			else:
+				return "Glitchless", "02qoxl7k", "Not Set"
 		else:
-			return "Glitchless", "02qoxl7k"
-	
+			print("o - Out of Bounds")
+			print("i - Inbounds")
+			print("g - Glitchless")
+			print("l - Inbounds No SLA Legacy")
+			print("u - Inbounds No SLA Unrestricted")
+			while not(category == 'o' or category == 'i' or category == 'g' or category == "l" or category == "u"):
+				if loops > 0:
+					print("That is not a valid category. Please try again.")
+				print()
+				category = input()
+				category = category.lower()
+				loops += 1
+			if (category == 'o'):
+				return "Out of Bounds", "lvdowokp", "Not Set"
+			elif (category == "i"):
+				return "Inbounds", "7wkp6v2r", "Not Set"
+			elif (category == "g"):
+				return "Glitchless", "wk6pexd1", "Not Set"
+			elif (category == "l"):
+				return "Inbounds NoSLA Legacy", "n2yq98ko", "jqz97g41"
+			elif (category == "u"):
+				return "Inbounds NoSLA Legacy", "n2yq98ko", "21g5r9xl"
 
 def getGameFromMap(firstMap):
 	portalMaps = ["testchmb_a_00", "testchmb_a_01", "testchmb_a_02", "testchmb_a_03", "testchmb_a_04", "testchmb_a_05", "testchmb_a_06", "testchmb_a_07", "testchmb_a_08", "testchmb_a_09", "testchmb_a_10", "testchmb_a_11", "testchmb_a_13", "testchmb_a_14", "testchmb_a_15", "escape_00", "escape_01", "escape_02"]
@@ -56,7 +80,7 @@ def getGameFromMap(firstMap):
 	if firstMap in portalMaps:
 		return "Portal"
 	elif firstMap in portal2Maps:
-		return "Portal"
+		return "Portal 2"
 
 def getIL(game, firstMap):
 	if (firstMap == "testchmb_a_00"):

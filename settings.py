@@ -2,14 +2,15 @@ import requests
 import os
 from dotenv import load_dotenv
 
-def getAPIKeys():
+def getAPIKeys(pathToExe):
     load_dotenv()
 
     gapiRefreshKey = ""
     gapiKey = ""
     srdcKey = ""
+    dir = os.path.dirname(pathToExe)
     try:
-        with open("settings.cfg", "r") as f:
+        with open(f"{dir}\\settings.cfg", "r") as f:
             gapiRefreshKey = f.readline()
             srdcKey = f.readline()
             gapiKey, gapiRefreshKey = getGapiKeyFromToken(gapiRefreshKey, True)
@@ -52,6 +53,8 @@ def getGapiKey():
 def getGapiKeyFromToken(authCode, refreshToken):
     url = "https://accounts.google.com/o/oauth2/token"
 
+    print(os.getenv('client_id'))
+
     if (refreshToken):
         data = {
             "refresh_token": authCode,
@@ -71,12 +74,15 @@ def getGapiKeyFromToken(authCode, refreshToken):
 
     response = requests.post(url, data=data)
 
+    print(response.content)
+
     if response.status_code == 200:
         refresh_token = response.json().get("refresh_token")
         access_token = response.json().get("access_token")
         return access_token, refresh_token
     else:
         print("Error:", response.status_code)
+        return "", ""
 
 def checkValidGapiKey(gapiKey):
     url = "https://www.googleapis.com/drive/v3/files"
