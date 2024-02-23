@@ -8,6 +8,7 @@ def parse_demo(filePath):
     with open(filePath, 'rb') as f:
         data = f.read()
 
+    demoProtocal = int.from_bytes(data[8:12], byteorder='little')
     name = data[276:536]
     map = data[536:796]
 
@@ -19,11 +20,17 @@ def parse_demo(filePath):
     readBuffer = 1072
     messageType = int.from_bytes(data[readBuffer:readBuffer+1], byteorder='little')
     readBuffer += 1
+    mssc = 1
+    if demoProtocal == 4:
+        mssc = 2
 
     
     while (messageType != 7):
         tick = int.from_bytes(data[readBuffer:readBuffer+4], byteorder='little')
         readBuffer += 4
+
+        if (mssc == 2):
+            readBuffer += 1
 
         if (tick < 4294960000 and tick > maxTick):
             maxTick = tick

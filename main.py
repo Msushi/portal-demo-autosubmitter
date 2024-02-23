@@ -14,6 +14,9 @@ def main():
         print("No demo file detected.")
         print()
         print("Please try again, make sure you drag demos onto the .exe")
+        demo = ["C:/coding/portal-demo-autosubmitter/dist/fullgame_28-12-000.dem"]
+        parse_demo(demo[0])
+        
         
     else:
         gapiKey, srdcKey = getAPIKeys(sys.argv[0])
@@ -35,7 +38,7 @@ def main():
         if (isIL):
             print(f"Are you sure you want to submit your {game} {levelText} {categoryText} {td} speedrun?")
             print()
-            input("Press any key to confirm")
+            input("Press enter to confirm")
             print()
             print("Uploading file to google drive...")
             print()
@@ -70,11 +73,6 @@ def main():
         if finalLink != "":
                 print("Success! Speedrun submitted.")
                 print(finalLink)
-
-
-            
-
-            
 
     print()
     print()

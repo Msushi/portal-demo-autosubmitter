@@ -1,5 +1,7 @@
 import requests
 import os
+import time
+from google_auth_oauthlib.flow import InstalledAppFlow
 from google_secret import *
 
 def getAPIKeys(pathToExe):
@@ -12,7 +14,7 @@ def getAPIKeys(pathToExe):
         with open(f"{dir}\\settings.cfg", "r") as f:
             gapiRefreshKey = f.readline()
             srdcKey = f.readline()
-            gapiKey, gapiRefreshKey = getGapiKeyFromToken(gapiRefreshKey, True)
+            gapiKey, gapiRefreshKey = getGapiKeyFromToken(gapiRefreshKey)
     except FileNotFoundError:
         pass
 
@@ -43,35 +45,39 @@ def getAPIKeys(pathToExe):
 
 def getGapiKey():
     print("You do not have a valid google account linked.")
-    print("Please click on the link below and login to grant access to your google drive")
-    print(oauth_url)
-    gapiKey = input("Authorization Code:")
-    print()
-    return getGapiKeyFromToken(gapiKey, False)
+    print("Your default browser will open shortly and have you login.")
 
-def getGapiKeyFromToken(authCode, refreshToken):
+    time.sleep(5)
+
+    flow  = InstalledAppFlow.from_client_config(
+    {
+        "installed": {
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob"],
+            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+            "token_uri": "https://oauth2.googleapis.com/token",
+        }
+    },
+    scopes=['https://www.googleapis.com/auth/drive.file'])
+
+    credentials = flow.run_local_server(port=0)
+
+    gapiKey = credentials.refresh_token
+    return getGapiKeyFromToken(gapiKey)
+
+def getGapiKeyFromToken(authCode):
     url = "https://accounts.google.com/o/oauth2/token"
 
-
-    if (refreshToken):
-        data = {
-            "refresh_token": authCode,
-            "client_id": client_id,
-            "client_secret": client_secret,
-            "grant_type": "refresh_token",
-            "redirect_uri": "urn:ietf:wg:oauth:2.0:oob"
-        }
-    else:
-        data = {
-            "code": authCode,
-            "client_id": client_id,
-            "client_secret": client_secret,
-            "grant_type": "authorization_code",
-            "redirect_uri": "urn:ietf:wg:oauth:2.0:oob"
-        }
+    data = {
+        "refresh_token": authCode,
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "grant_type": "refresh_token",
+        "redirect_uri": "urn:ietf:wg:oauth:2.0:oob"
+    }
 
     response = requests.post(url, data=data)
-
 
     if response.status_code == 200:
         refresh_token = response.json().get("refresh_token")
