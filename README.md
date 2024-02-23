@@ -2,7 +2,6 @@
 A python program that automatically submits your Portal speedruns to speedrun.com. Just drag and drop your demos on the program!
 
 ![](github-resources/example.gif)
-*Example demo submission.*
 
 ## Download
 If you are just here to download, please head over to the [releases page](https://github.com/Msushi/portal-demo-autosubmitter/releases).
